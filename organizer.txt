@@ -1,0 +1,136 @@
+app/
+├── routes/
+│   ├── auth.py
+│   ├── posts.py
+│   ├── comments.py
+│   ├── analytics.py
+├── models/
+│   ├── user.py
+│   ├── post.py
+│   ├── comment.py
+│   ├── version.py
+│   ├── media.py
+│   ├── tag.py
+│   └── analytics.py
+├── services/
+│   ├── markdown.py
+│   ├── versioning.py
+│   ├── autosave.py
+│   ├── webhook.py
+│   ├── cache.py
+├── tasks/
+│   ├── autosave.py
+│   ├── notify.py
+├── templates/        # for previews
+├── static/           # for images or default banners
+├── config.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(50), default="author")  # "author", "editor", "admin"
+    posts = db.relationship("Post", backref="author", lazy=True)
+    comments = db.relationship("Comment", backref="user", lazy=True)
+
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    slug = db.Column(db.String(255), unique=True, nullable=False)
+    body_md = db.Column(db.Text, nullable=False)
+    body_html = db.Column(db.Text)
+    status = db.Column(db.String(50), default="draft")  # draft, pending, published, archived
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
+
+    versions = db.relationship("PostVersion", backref="post", lazy=True)
+    tags = db.relationship("Tag", secondary="post_tags", backref="posts")
+    comments = db.relationship("Comment", backref="post", lazy=True)
+    analytics = db.relationship("PostAnalytics", backref="post", uselist=False)
+
+
+
+class PostVersion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    version_number = db.Column(db.Integer)
+    body_md = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    body = db.Column(db.Text, nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey("comment.id"), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    replies = db.relationship("Comment", backref=db.backref("parent", remote_side=[id]), lazy=True)
+
+
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+
+class PostTags(db.Model):
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"), primary_key=True)
+    tag_id = db.Column(db.Integer, db.ForeignKey("tag.id"), primary_key=True)
+
+
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+    posts = db.relationship("Post", backref="category", lazy=True)
+
+
+
+class PostAnalytics(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"), unique=True)
+    views = db.Column(db.Integer, default=0)
+    likes = db.Column(db.Integer, default=0)
+    read_time_seconds = db.Column(db.Integer, default=0)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+
+
+class MediaAsset(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255))
+    filepath = db.Column(db.String(255))
+    uploaded_by = db.Column(db.Integer, db.ForeignKey("user.id"))
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+
+class Subscriber(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    active = db.Column(db.Boolean, default=True)
+    subscribed_at = db.Column(db.DateTime, default=datetime.utcnow)
