@@ -3,12 +3,16 @@ from flask_cors import CORS
 from models import db, User, Post
 from config import config
 from routes import api
-
+from flask_jwt_extended import JWTManager
 
 
 # Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(config)
+
+
+jwt = JWTManager()
+
 
 # Register API Blueprint
 app.register_blueprint(api)
@@ -18,7 +22,10 @@ app.register_blueprint(api)
 CORS(app, resources={r"/api/*": {"origins": "*"}}, 
      supports_credentials=True, 
      allow_headers=["Content-Type", "Authorization"])
+
 db.init_app(app)
+jwt.init_app(app)
+
 
 
 # create tables (run this separately)
@@ -30,7 +37,7 @@ def init_db():
 
 @app.route('/')
 def Home():
-    return "Welcome to our Site"
+    return f"Welcome to our Site {config.JWT_SECRET_KEY}"
 
 if __name__ == '__main__': 
 
