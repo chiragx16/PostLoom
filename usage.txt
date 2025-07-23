@@ -1,0 +1,68 @@
+🎯 Purpose of /revoke-session/<jti>
+It allows a user to:
+- Log out of a specific session — e.g. a browser or device they no longer trust or use
+- Maintain active sessions elsewhere — like staying logged in on mobile but logging out on desktop
+In short: it's a targeted logout instead of a full logout or logout-everywhere.
+
+🧑‍💻 How a User Would Use It
+- They hit /auth/sessions to view their active sessions, which could return something like:
+[
+  {
+    "device": "Chrome on Windows",
+    "ip": "192.168.1.10",
+    "created_at": "2025-07-22T17:22:00",
+    "jti": "abc123"
+  },
+  {
+    "device": "Firefox on Mac",
+    "ip": "192.168.1.22",
+    "created_at": "2025-07-21T09:45:00",
+    "jti": "def456"
+  }
+]
+
+
+- They decide they no longer trust abc123 (say, a shared computer) and want to log out from it.
+- They make a request to:
+POST /auth/revoke-session/abc123
+- The backend revokes that token in Redis and deletes the session info.
+✅ From this point forward:- That token can no longer access protected routes
+- /auth/sessions won't show that session
+- Other sessions (e.g. Firefox on Mac) remain active
+🧠 Real-World Use CaseThink Gmail’s “Sign out of all devices” vs. “Manage your sessions” — your route gives users powerful control over where they stay logged in.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------
+
+
+🧠 Enhancement 1: Add "last_active" on API Hits
+In a base middleware or inside key protected routes:
+@jwt_required()
+def protected_route():
+    jti = get_jwt()["jti"]
+    user_id = get_jwt_identity()
+    now = datetime.utcnow().isoformat()
+
+    redis_client.hset(f"session_{user_id}_{jti}", "last_active", now)
+
+
+

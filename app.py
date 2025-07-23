@@ -1,17 +1,15 @@
+from services.jwt_config import jwt, configure_jwt
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from models import db, User, Post
+from models import db
 from config import config
 from routes import api
-from flask_jwt_extended import JWTManager
+import redis
 
 
 # Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(config)
-
-
-jwt = JWTManager()
 
 
 # Register API Blueprint
@@ -24,7 +22,7 @@ CORS(app, resources={r"/api/*": {"origins": "*"}},
      allow_headers=["Content-Type", "Authorization"])
 
 db.init_app(app)
-jwt.init_app(app)
+configure_jwt(app)
 
 
 
