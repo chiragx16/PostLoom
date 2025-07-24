@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- <textarea id="editor"></textarea> -->
+    <!-- <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script> -->
+    <!-- <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/super-build/ckeditor.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@ckeditor/ckeditor5-autosave/build/autosave.js"></script>
+
+    <script>
+        // ClassicEditor
+        //     .create(document.querySelector('#editor'), {
+        //         plugins: [AutoSave, ImageUpload, MediaEmbed, Font],
+        //         toolbar: ['bold', 'italic', 'link', 'uploadImage', 'mediaEmbed', 'fontFamily'],
+        //         autosave: {
+        //             save(editor) {
+        //                 return fetch('/api/drafts/autosave', {
+        //                     method: 'POST',
+        //                     body: JSON.stringify({ content: editor.getData() }),
+        //                     headers: { 'Content-Type': 'application/json' }
+        //                 });
+        //             }
+        //         }
+        //     })
+
+
+        // ClassicEditor.create(document.querySelector('#editor')).then(editor => {
+        //     editor.model.document.on('change:data', () => {
+        //         setTimeout(() => {
+        //             fetch('/api/posts/autosave', {
+        //                 method: 'POST',
+        //                 headers: { 'Content-Type': 'application/json' },
+        //                 body: JSON.stringify({ content: editor.getData() })
+        //             });
+        //         }, 1500);
+        //     });
+        // });
+
+
+        ClassicEditor.create(document.querySelector('#editor')).then(editor => {
+            let autosaveTimeout = null;
+
+            editor.model.document.on('change:data', () => {
+                if (autosaveTimeout) clearTimeout(autosaveTimeout);
+
+                autosaveTimeout = setTimeout(() => {
+                    fetch('/api/posts/autosave', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: editor.getData() })
+                    })
+                        .then(res => res.json())
+                        .then(data => console.log("✅ Autosaved at:", data.saved_at))
+                        .catch(err => console.error("Autosave error:", err));
+                }, 5000); // ⏱️ 5 seconds
+            });
+        });
+
+
+    </script> -->
+    <!-- <textarea id="editor"></textarea>
+    <div id="outline-container"></div>
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/super-build/ckeditor.js"></script>
+    <script>
+        let autosaveTimeout = null;
+
+        CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
+            documentOutline: {
+                container: document.querySelector('#outline-container')
+            },
+            removePlugins: [
+                'RealTimeCollaborativeComments',
+                'RealTimeCollaborativeTrackChanges',
+                'RealTimeCollaborativeRevisionHistory',
+                'PresenceList',
+                'Comments',
+                'TrackChanges',
+                'RevisionHistory'
+            ],
+            toolbar: {
+                items: [
+                    'heading', '|', 'bold', 'italic', 'link', 'fontSize', 'fontFamily',
+                    'fontColor', 'fontBackgroundColor', '|', 'bulletedList', 'numberedList',
+                    'todoList', '|', 'insertImage', 'mediaEmbed', 'blockQuote', 'insertTable',
+                    'specialCharacters', 'horizontalLine', 'sourceEditing', 'htmlEmbed'
+                ]
+            },
+            pagination: {
+                pageWidth: '21cm',
+                pageHeight: '29.7cm',
+                margin: {
+                    top: '2cm',
+                    bottom: '2cm',
+                    left: '2cm',
+                    right: '2cm'
+                }
+            },
+            wproofreader: {
+                serviceId: 'your-service-id',
+                srcUrl: 'https://svc.webspellchecker.net/spellcheck31/wscbundle/wscbundle.js'
+            },
+
+            mediaEmbed: { previewsInData: true },
+            htmlEmbed: { showPreviews: true }
+        }).then(editor => {
+
+            editor.model.document.on('change:data', () => {
+                if (autosaveTimeout) clearTimeout(autosaveTimeout);
+
+                autosaveTimeout = setTimeout(() => {
+                    fetch('/api/posts/autosave', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: editor.getData() })
+                    })
+                        .then(res => res.json())
+                        .then(data => console.log("✅ Autosaved at", data.saved_at))
+                        .catch(err => console.error("Autosave failed:", err));
+                }, 5000); // ⏱️ Wait 5 seconds after last change
+            });
+
+        });
+    </script> -->
+
+    <textarea id="editor"></textarea>
+    <div id="outline-container"></div>
+
+    <!-- Correct CDN for CKEditor 5 Classic Build -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+    <script>
+        let autosaveTimeout = null;
+
+        ClassicEditor.create(document.getElementById("editor"), {
+            removePlugins: [
+                'RealTimeCollaborativeComments',
+                'RealTimeCollaborativeTrackChanges',
+                'RealTimeCollaborativeRevisionHistory',
+                'PresenceList',
+                'Comments',
+                'TrackChanges',
+                'RevisionHistory',
+                'Pagination',
+                'WProofreader',
+                'DocumentOutline',
+                'TableOfContents',
+                'FormatPainter',
+                'Template',
+                'SlashCommand',
+                'PasteFromOfficeEnhanced',
+                'SourceEditing'
+            ],
+            toolbar: {
+                items: [
+                    'heading', '|', 'bold', 'italic', 'link', 'fontSize', 'fontFamily',
+                    'fontColor', 'fontBackgroundColor', '|', 'bulletedList', 'numberedList',
+                    'todoList', '|', 'insertImage', 'mediaEmbed', 'blockQuote', 'insertTable',
+                    'specialCharacters', 'horizontalLine', 'htmlEmbed'
+                ]
+            },
+            mediaEmbed: { previewsInData: true },
+            htmlEmbed: { showPreviews: true }
+        }).then(editor => {
+            editor.model.document.on('change:data', () => {
+                if (autosaveTimeout) clearTimeout(autosaveTimeout);
+
+                autosaveTimeout = setTimeout(() => {
+                    fetch('/api/posts/autosave', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: editor.getData() })
+                    })
+                        .then(res => res.json())
+                        .then(data => console.log("✅ Autosaved at", data.saved_at))
+                        .catch(err => console.error("Autosave failed:", err));
+                }, 5000);
+            });
+        }).catch(error => {
+            console.error("❌ CKEditor failed to initialize:", error);
+        });
+    </script>
+
+
+
+</body>
+
+</html>

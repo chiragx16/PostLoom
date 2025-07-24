@@ -1,0 +1,11 @@
+✅ Markdown Rendering (markdown2 or mistune) for post content
+🔄 Post Status Lifecycle: Draft → Pending → Published → Archived
+💾 Draft Autosave: Use Celery + Redis to autosave in intervals
+👀 Preview Mode: Jinja rendering without committing to DB
+🌐 Nested Comments with recursion
+🔔 Webhooks: Post-publish event triggers (email/SMS/message queue)
+📈 Analytics API: Track views, likes, read-time
+🏆 Query for Top Authors, Most-Edited Posts
+
+
+lucene full text search 

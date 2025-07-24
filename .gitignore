@@ -1,3 +1,9 @@
 .txt
 
 config.py
+**/node_modules/
+
+/node_modules
+node_modules
+
+/node_modules

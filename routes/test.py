@@ -1,9 +1,9 @@
 from services.auth_utils import role_required
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, render_template
 from models import User
 from services.redis_store import redis_client
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 posts_api = Blueprint('posts_api',__name__)
@@ -25,6 +25,47 @@ def get_users():
 
     users = User.query.all()
     return jsonify([user.to_dict() for user in users])
+
+
+
+@posts_api.route("/autosave", methods=["POST"])
+def autosave_draft():
+    data = request.get_json()
+    user_id = "123"
+    content = data.get("content", "")
+
+    timestamp = datetime.utcnow().isoformat()
+    redis_client.hmset(f"draft_{user_id}", {
+        "content": content,
+        "last_saved": timestamp
+    })
+    redis_client.expire(f"draft_{user_id}", timedelta(hours=1))
+
+    return jsonify(msg="Draft autosaved", saved_at=timestamp)
+
+
+
+# @posts_api.route("/drafts/autosave", methods=["POST"])
+# @jwt_required()
+# def autosave_draft():
+#     data = request.get_json()
+#     user_id = get_jwt_identity()
+#     content = data.get("content", "")
+
+#     timestamp = datetime.utcnow().isoformat()
+#     redis_client.hmset(f"draft_{user_id}", {
+#         "content": content,
+#         "last_saved": timestamp
+#     })
+#     redis_client.expire(f"draft_{user_id}", timedelta(hours=1))
+
+#     return jsonify(msg="Draft autosaved", saved_at=timestamp)
+
+
+
+@posts_api.route("/editor_page", methods=["GET"])
+def editor_page():
+    return render_template('new.html')
 
 # @app.route('/users', methods=['POST'])
 # def create_user():

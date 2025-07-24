@@ -72,7 +72,8 @@ class Post(db.Model):
     title = db.Column(db.String(255), nullable=False)
     slug = db.Column(db.String(255), unique=True, nullable=False)
     body_md = db.Column(db.Text, nullable=False)
-    body_html = db.Column(db.Text)
+    body_html = db.Column(db.Text, nullable=False)
+    read_time_estimate = db.Column(db.Integer)
     status = db.Column(db.String(50), default="draft")  # draft, pending, published, archived
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -117,7 +118,8 @@ class Post(db.Model):
             'category': self.category.name if self.category else None,
             'tags': [tag.name for tag in self.tags],
             'comments_count': len(self.comments),
-            'versions_count': len(self.versions)
+            'versions_count': len(self.versions),
+            'read_time_estimate': self.read_time_estimate if self.read_time_estimate else None
         }
         
         if include_body:

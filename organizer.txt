@@ -35,18 +35,7 @@ https://codepen.io/imramonkelvin/full/YPXoeoB
 
 
 Run Redis Server: sudo service redis-server start
-
-----------------------------------------------------------------------------------------------
-
-🗃️ Step 4: Session Tracking (Optional but Powerful)
-On login (or token issuance), store a session record:
-device = request.headers.get("User-Agent")[:128]  # Basic fingerprint
-session_key = f"session_{user.id}_{jti}"
-redis_client.hmset(session_key, {
-    "device": device,
-    "last_active": datetime.utcnow().isoformat()
-})
-redis_client.expire(session_key, timedelta(hours=2))  # Match token expiry
+Install CkEditor: npm install --save @ckeditor/ckeditor5-build-classic
 
 
 ---------------------------------------------------------------------------------------------------
