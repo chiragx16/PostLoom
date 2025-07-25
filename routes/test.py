@@ -65,7 +65,7 @@ def autosave_draft():
 
 @posts_api.route("/editor_page", methods=["GET"])
 def editor_page():
-    return render_template('new.html')
+    return render_template('index.html')
 
 # @app.route('/users', methods=['POST'])
 # def create_user():

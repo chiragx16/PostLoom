@@ -8,7 +8,7 @@ import redis
 
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.config.from_object(config)
 
 
@@ -41,4 +41,5 @@ if __name__ == '__main__':
 
     init_db()
     app.run(debug=True, port=8057, host='0.0.0.0')
+
 
