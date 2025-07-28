@@ -61,6 +61,16 @@ def autosave_draft():
 
 #     return jsonify(msg="Draft autosaved", saved_at=timestamp)
 
+@posts_api.route("/load_draft", methods=["GET"])
+def load_draft():
+    user_id = "123"
+    draft_key = f"draft_{user_id}"
+    content = redis_client.hget(draft_key, "content")
+    if content:
+        return jsonify({ "content": content.decode("utf-8") })
+    else:
+        return jsonify({ "content": "" })
+
 
 
 @posts_api.route("/editor_page", methods=["GET"])

@@ -430,24 +430,84 @@ const editorConfig = {
 // 	return editor;
 // });
 
-ClassicEditor.create(document.querySelector('#editor'), editorConfig).then(editor => {
-	const wordCount = editor.plugins.get('WordCount');
-	document.querySelector('#editor-word-count').appendChild(wordCount.wordCountContainer);
 
-	let autosaveTimeout = null;
+// fetch('/api/posts/load_draft', {
+// 	method: 'GET'
+// })
+// 	.then(res => res.json())
+// 	.then(data => {
+// 		ClassicEditor.create(document.querySelector('#editor'), {
+// 			// your existing config
+// 		}).then(editor => {
+// 			if (data.content) {
+// 				editor.setData(data.content);  // 🌟 preload saved draft
+// 			}
+// 			// your autosave logic
+// 		});
+// 	});
 
-	editor.model.document.on('change:data', () => {
-		if (autosaveTimeout) clearTimeout(autosaveTimeout);
 
-		autosaveTimeout = setTimeout(() => {
-			fetch('/api/posts/autosave', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ content: editor.getData() })
-			})
-			.then(res => res.json())
-			.then(data => console.log("✅ Autosaved at", data.saved_at))
-			.catch(err => console.error("❌ Autosave failed:", err));
-		}, 5000); // 5s debounce
+
+
+
+// ClassicEditor.create(document.querySelector('#editor'), editorConfig).then(editor => {
+// 	const wordCount = editor.plugins.get('WordCount');
+// 	document.querySelector('#editor-word-count').appendChild(wordCount.wordCountContainer);
+
+// 	let autosaveTimeout = null;
+
+// 	editor.model.document.on('change:data', () => {
+// 		if (autosaveTimeout) clearTimeout(autosaveTimeout);
+
+// 		autosaveTimeout = setTimeout(() => {
+// 			fetch('/api/posts/autosave', {
+// 				method: 'POST',
+// 				headers: { 'Content-Type': 'application/json' },
+// 				body: JSON.stringify({ content: editor.getData() })
+// 			})
+// 				.then(res => res.json())
+// 				.then(data => console.log("✅ Autosaved at", data.saved_at))
+// 				.catch(err => console.error("❌ Autosave failed:", err));
+// 		}, 5000); // 5s debounce
+// 	});
+// });
+
+
+
+fetch('/api/posts/load_draft', {
+	method: 'GET'
+})
+	.then(res => res.json())
+	.then(data => {
+		return ClassicEditor.create(document.querySelector('#editor'), editorConfig)
+			.then(editor => ({ editor, data })); // 👈 pass both editor and data
+	})
+	.then(({ editor, data }) => {
+		if (data.content) {
+			editor.setData(data.content); // 🌟 preload draft
+		}
+
+		// 🧮 Word Count
+		const wordCount = editor.plugins.get('WordCount');
+		document.querySelector('#editor-word-count')
+			.appendChild(wordCount.wordCountContainer);
+
+		// 💾 Autosave
+		let autosaveTimeout = null;
+		editor.model.document.on('change:data', () => {
+			if (autosaveTimeout) clearTimeout(autosaveTimeout);
+			autosaveTimeout = setTimeout(() => {
+				fetch('/api/posts/autosave', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ content: editor.getData() })
+				})
+					.then(res => res.json())
+					.then(data => console.log("✅ Autosaved at", data.saved_at))
+					.catch(err => console.error("❌ Autosave failed:", err));
+			}, 5000);
+		});
+	})
+	.catch(err => {
+		console.error("❌ Editor setup failed:", err);
 	});
-});
