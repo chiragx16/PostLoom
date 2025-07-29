@@ -1,27 +1,20 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response, g, redirect, url_for
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt
 from flask_jwt_extended import get_jwt_identity, decode_token
 from werkzeug.security import check_password_hash
 from services.redis_store import redis_client  
+from services.auth_utils import jwt_required_cookie
 from models import User
 from datetime import timedelta, datetime
 
 auth_api = Blueprint('auth_api',__name__)
 
 
-# @auth_api.route("/login", methods=["POST"])
-# def login():
-#     data = request.get_json()
-#     user = User.query.filter_by(email=data["email"]).first()
-
-#     if not user or not check_password_hash(user.password_hash, data["password"]):
-#         return jsonify({"msg": "Invalid credentials"}), 401
-
-#     # token = create_access_token(identity={"id": user.id, "role": user.role})
-#     token = create_access_token(identity=str(user.id), additional_claims={"role": user.role})
-#     return jsonify(access_token=token)
-
+@auth_api.route("/check-auth", methods=["GET"])
+@jwt_required_cookie
+def check_auth():
+    return jsonify({"message": "Already authenticated"}), 200
 
 
 @auth_api.route("/login", methods=["POST"])
@@ -67,7 +60,7 @@ def login():
     response.set_cookie(
         'auth_token',
         token,
-        max_age=timedelta(days=7),  # Cookie expires in 7 days
+        max_age=timedelta(hours=2),  # Cookie expires in 7 days
         httponly=True,              # Prevents XSS attacks
         secure=True,                # Only send over HTTPS
         samesite='Strict'           # CSRF protection
@@ -78,16 +71,23 @@ def login():
 
 
 @auth_api.route("/logout", methods=["POST"])
-@jwt_required()
+@jwt_required_cookie
 def logout():
-    jti = get_jwt()["jti"]
-    redis_client.setex(f"revoked_{jti}", timedelta(hours=2), "revoked")
+    # Get token to invalidate session
+    current_user_id = g.current_user_id
+    token = request.cookies.get('auth_token')
+    if token:
+        try:
+            decoded = decode_token(token)
+            jti = decoded["jti"]
+            session_key = f"session_{current_user_id}_{jti}"
+            redis_client.delete(session_key)  # Remove from Redis
+        except:
+            pass  # Token might be invalid, but still clear cookie
     
-    # Optionally clear session record
-    user_id = get_jwt_identity()
-    redis_client.delete(f"session_{user_id}_{jti}")
-    
-    return jsonify(msg="Successfully logged out")
+    response = make_response(redirect(url_for("api.posts_api.login_page")))
+    response.set_cookie('auth_token', '', expires=0)  # Clear cookie
+    return response
 
 
 

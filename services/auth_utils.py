@@ -1,6 +1,6 @@
 from flask_jwt_extended import jwt_required, get_jwt
 from functools import wraps
-from flask import request, jsonify, current_app
+from flask import request, jsonify, current_app, g
 import jwt
 from datetime import datetime
 
@@ -65,8 +65,6 @@ def role_required(required_roles):
     
 #     return decorated
 
-
-from flask import g
 
 def jwt_required_cookie(f):
     @wraps(f)

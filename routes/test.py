@@ -16,12 +16,6 @@ posts_api = Blueprint('posts_api',__name__)
 @role_required(["editor", "author"])
 def get_users():
 
-    jti = get_jwt()["jti"]
-    user_id = get_jwt_identity()
-    now = datetime.utcnow().isoformat()
-
-    redis_client.hset(f"session_{user_id}_{jti}", "last_active", now)
-
 
     users = User.query.all()
     return jsonify([user.to_dict() for user in users])

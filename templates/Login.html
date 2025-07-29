@@ -6,10 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/login.css">
     <title>Login Page</title>
+
+    <style>
+        body {
+            display: none;
+        }
+
+        body.ready {
+            display: flex;
+        }
+    </style>
+
 </head>
 
 <body>
-    <main class="box">
+    <div id="loading">Checking login status...</div>
+    <main class="box" id="main_block">
         <div class="content">
             <span>
                 <i class="fa-solid fa-code fa-xm"></i>
@@ -81,6 +93,32 @@
 
 
     <script>
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/auth/check-auth', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (res.ok) {
+                    // Already logged in — redirect immediately
+                    window.location.href = '/api/posts/editor_page';
+                    return;
+                } else {
+                    // Not logged in
+                    console.log('User not authenticated');
+                }
+            } catch (err) {
+                console.error('Error checking auth:', err);
+            }
+
+            // Not logged in — show login form
+            document.getElementById('loading').style.display = 'none';
+
+            // 👇 Allow page to be shown after login check completes
+            document.body.classList.add('ready');
+        });
+
         document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -93,17 +131,15 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    credentials: 'include', // 🔑 VERY IMPORTANT: allows cookies to be stored
+                    credentials: 'include',
                     body: JSON.stringify({ email, password })
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    // ✅ Login successful, redirect
                     window.location.href = '/api/posts/editor_page';
                 } else {
-                    // ❌ Show error
                     alert(data.message || 'Login failed');
                 }
             } catch (error) {
@@ -112,6 +148,7 @@
             }
         });
     </script>
+
 
 
 
