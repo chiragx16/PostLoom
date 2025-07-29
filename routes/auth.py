@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt
 from flask_jwt_extended import get_jwt_identity, decode_token
@@ -28,6 +28,9 @@ auth_api = Blueprint('auth_api',__name__)
 def login():
     data = request.get_json()
     user = User.query.filter_by(email=data["email"]).first()
+    
+    if not user or not user.check_password(data["password"]):  # Add password validation
+        return jsonify({"message": "Invalid credentials"}), 401
 
     token = create_access_token(
         identity=str(user.id),
@@ -36,7 +39,7 @@ def login():
 
     # Session metadata
     decoded = decode_token(token)
-    jti = decoded["jti"]   # Optional, or generate a uuid here if token not yet returned
+    jti = decoded["jti"]
     device = request.headers.get("User-Agent")[:128] or "Unknown"
     ip = request.remote_addr or "Unknown"
     timestamp = datetime.utcnow().isoformat()
@@ -48,9 +51,29 @@ def login():
         "created_at": timestamp,
         "last_active": timestamp
     })
-    redis_client.expire(session_key, timedelta(hours=2))  # match token life
+    redis_client.expire(session_key, timedelta(hours=2))
 
-    return jsonify(access_token=token)
+    # Create response and set cookie
+    response = make_response(jsonify({
+        "message": "Login successful",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "role": user.role
+        }
+    }))
+    
+    # Set HTTP-only cookie for security
+    response.set_cookie(
+        'auth_token',
+        token,
+        max_age=timedelta(days=7),  # Cookie expires in 7 days
+        httponly=True,              # Prevents XSS attacks
+        secure=True,                # Only send over HTTPS
+        samesite='Strict'           # CSRF protection
+    )
+    
+    return response
 
 
 
@@ -123,7 +146,7 @@ def revoke_session(jti):
 
 
 
-@auth_api.route("/logout_all", methods=["POST"])
+@auth_api.route("/logout_all", methods=["GET"])
 @jwt_required()
 def logout_all():
     user_id = get_jwt_identity()

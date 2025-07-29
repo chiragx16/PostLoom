@@ -1,5 +1,5 @@
-from services.auth_utils import role_required
-from flask import request, jsonify, Blueprint, render_template
+from services.auth_utils import role_required, jwt_required_cookie
+from flask import request, jsonify, Blueprint, render_template, g
 from models import User
 from services.redis_store import redis_client
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
@@ -12,7 +12,7 @@ posts_api = Blueprint('posts_api',__name__)
 
 # Routes
 @posts_api.route('/users', methods=['GET'])
-@jwt_required()
+@jwt_required_cookie
 @role_required(["editor", "author"])
 def get_users():
 
@@ -29,6 +29,8 @@ def get_users():
 
 
 @posts_api.route("/autosave", methods=["POST"])
+@jwt_required_cookie
+@role_required(["editor", "author"])
 def autosave_draft():
     data = request.get_json()
     user_id = "123"
@@ -62,6 +64,8 @@ def autosave_draft():
 #     return jsonify(msg="Draft autosaved", saved_at=timestamp)
 
 @posts_api.route("/load_draft", methods=["GET"])
+@jwt_required_cookie
+@role_required(["editor", "author"])
 def load_draft():
     user_id = "123"
     draft_key = f"draft_{user_id}"
@@ -74,8 +78,18 @@ def load_draft():
 
 
 @posts_api.route("/editor_page", methods=["GET"])
+@jwt_required_cookie
+@role_required(["editor", "author"])
 def editor_page():
-    return render_template('index.html')
+    user_id = g.current_user_id
+    return render_template("index.html")
+
+
+
+@posts_api.route("/Login", methods=["GET"])
+def login_page():
+    return render_template('Login.html')
+
 
 # @app.route('/users', methods=['POST'])
 # def create_user():

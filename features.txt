@@ -9,3 +9,18 @@
 
 
 lucene full text search 
+
+
+
+
+
+
+
+
+
+Endpoint	Purpose
+POST /posts	Creates SQL draft, returns ID
+PUT /posts/:id	Updates full draft manually
+PUT /autosave/:id	Writes to Redis
+GET /autosave/:id	Reads Redis draft
+POST /publish/:id	Syncs Redis → SQL, sets status='published'
