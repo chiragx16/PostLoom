@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlogVerse Login</title>
+    <link href="https://fonts.facebookapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: flex-start;
+            padding-left: 15vw;
+            align-items: center;
+        }
+
+        .container {
+            position: relative;
+            width: 790px;
+            height: 470px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px 65px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            overflow: visible;
+        }
+
+        .site-title {
+            position: absolute;
+            top: 40px;
+            left: 110px;
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            /* For Firefox */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .great-vibes-regular {
+            font-family: "Great Vibes", cursive;
+            font-size: 100px;
+            font-weight: 400;
+            font-style: normal;
+            transform: translateX(-55px);
+        }
+
+        .intro-text {
+            margin-top: 135px;
+            max-width: 420px;
+        }
+
+        .intro-text h1 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .intro-text p {
+            font-size: 16px;
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .login-form {
+            position: absolute;
+            top: 50%;
+            right: -180px;
+            transform: translateY(-50%);
+            width: 350px;
+            height: 360px;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #4f46e5;
+        }
+
+        .login-form h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #343a40;
+            margin-bottom: 25px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.3s ease;
+        }
+
+        .login-form input:focus {
+            border: 2px solid #4f46e5;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .login-form button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .login-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(79, 70, 229, 0.4);
+        }
+
+        .login-form button:hover::before {
+            left: 100%;
+        }
+
+        .login-form button:active {
+            transform: translateY(0);
+        }
+
+
+        @media (max-width: 960px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            .login-form {
+                position: static;
+                transform: none;
+                width: 100%;
+                margin-top: 30px;
+                border-left: none;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .site-title {
+                position: static;
+                text-align: right;
+                margin-top: -20px;
+            }
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper input {
+            width: 100%;
+            padding: 14px 16px;
+            padding-right: 40px;
+            /* Make space for the icon */
+            margin-bottom: 18px;
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.3s ease;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 38%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            font-size: 16px;
+            /* Adjust emoji size if needed */
+            line-height: 1;
+        }
+
+        /* This ensures any image within the toggle is also centered */
+        .toggle-password img {
+            display: block;
+            vertical-align: middle;
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="site-title great-vibes-regular">PostLoom</div>
+
+        <div class="intro-text">
+            <h1>Welcome Back!</h1>
+            <p>Join the community of passionate writers and thinkers. Login to start sharing your thoughts, stories, and
+                inspiration with the world.</p>
+        </div>
+
+        <div class="login-form">
+            <h2>Login to Your Account</h2>
+            <form>
+                <input type="email" placeholder="email@email.com" required />
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="password" required />
+                    <span class="toggle-password" id="eyeToggle" onclick="togglePassword()">
+                        <img id="eyeIcon" src="https://emojicdn.elk.sh/👀?style=apple" alt="eye emoji" style="width: 22px; height: 22px; vertical-align: middle;">
+                    </span>
+                </div>
+
+
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById("password");
+            const icon = document.getElementById("eyeIcon");
+            const toggle = document.getElementById("eyeToggle");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.src = "https://emojicdn.elk.sh/🙈?style=apple"; // 🙈
+                toggle.style.top = "36%";
+            } else {
+                input.type = "password";
+                icon.src = "https://emojicdn.elk.sh/👀?style=apple"; // 👀
+                toggle.style.top = "38%";
+            }
+        }
+    </script>
+
+
+
+
+</body>
+
+</html>
