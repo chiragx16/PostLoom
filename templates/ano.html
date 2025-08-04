@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BlogVerse Login</title>
-    <link href="https://fonts.facebookapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -18,16 +18,20 @@
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             height: 100vh;
-            display: flex;
+            display: none;
             justify-content: flex-start;
             padding-left: 15vw;
             align-items: center;
         }
 
+        body.ready {
+            display: flex;
+        }
+
         .container {
             position: relative;
-            width: 790px;
-            height: 470px;
+            width: 740px;
+            height: 400px;
             background: #ffffff;
             border-radius: 20px;
             padding: 40px 65px;
@@ -78,19 +82,20 @@
         .login-form {
             position: absolute;
             top: 50%;
-            right: -180px;
+            right: -165px;
             transform: translateY(-50%);
-            width: 350px;
-            height: 360px;
+            width: 320px;
+            height: 320px;
             padding: 40px;
             background: #ffffff;
             border-radius: 16px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0px 30px rgba(0, 0, 0, 0.1), 0 15px 30px rgba(0, 0, 0, 0.1);
+
             border-left: 5px solid #4f46e5;
         }
 
         .login-form h2 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
             color: #343a40;
             margin-bottom: 25px;
@@ -218,6 +223,21 @@
             width: 16px;
             height: 16px;
         }
+
+        .copyright {
+            position: absolute;
+            bottom: 55px;
+            /* push it downward */
+            right: 240px;
+            /* align to the right */
+            font-size: 8px;
+            color: rgba(79, 70, 229, 0.4);
+        }
+
+        .copyright p{
+            font-size: 14px;
+            color: rgb(74, 98, 255);
+        }
     </style>
 
     <style>
@@ -226,6 +246,7 @@
 </head>
 
 <body>
+    <div id="loading">Checking login status...</div>
     <div class="container">
         <div class="site-title great-vibes-regular">PostLoom</div>
 
@@ -233,16 +254,21 @@
             <h1>Welcome Back!</h1>
             <p>Join the community of passionate writers and thinkers. Login to start sharing your thoughts, stories, and
                 inspiration with the world.</p>
+            <div class="copyright">
+                <p>&copy; 2025 PostLoom. All rights reserved.</p>
+            </div>
         </div>
 
-        <div class="login-form">
+
+        <div class="login-form" id="loginForm">
             <h2>Login to Your Account</h2>
             <form>
-                <input type="email" placeholder="email@email.com" required />
+                <input type="email" id="email" placeholder="email@email.com" required />
                 <div class="password-wrapper">
                     <input type="password" id="password" placeholder="password" required />
                     <span class="toggle-password" id="eyeToggle" onclick="togglePassword()">
-                        <img id="eyeIcon" src="https://emojicdn.elk.sh/👀?style=apple" alt="eye emoji" style="width: 22px; height: 22px; vertical-align: middle;">
+                        <img id="eyeIcon" src="https://emojicdn.elk.sh/👀?style=apple" alt="eye emoji"
+                            style="width: 22px; height: 22px; vertical-align: middle;">
                     </span>
                 </div>
 
@@ -253,6 +279,62 @@
     </div>
 
     <script>
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/auth/check-auth', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (res.ok) {
+                    // Already logged in — redirect immediately
+                    window.location.href = '/api/posts/editor_page';
+                    return;
+                } else {
+                    // Not logged in
+                    console.log('User not authenticated');
+                }
+            } catch (err) {
+                console.error('Error checking auth:', err);
+            }
+
+            // Not logged in — show login form
+            document.getElementById('loading').style.display = 'none';
+
+            // 👇 Allow page to be shown after login check completes
+            document.body.classList.add('ready');
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/api/posts/editor_page';
+                } else {
+                    alert(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('An error occurred during login.');
+            }
+        });
+
         function togglePassword() {
             const input = document.getElementById("password");
             const icon = document.getElementById("eyeIcon");
