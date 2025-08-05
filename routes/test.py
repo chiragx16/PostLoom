@@ -82,7 +82,7 @@ def editor_page():
 
 @posts_api.route("/Login", methods=["GET"])
 def login_page():
-    return render_template('ano.html')
+    return render_template('mno.html')
 
 
 # @app.route('/users', methods=['POST'])

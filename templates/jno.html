@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+    </style>
+
+    <style>
+        html,
+        body {
+            font-family: 'Dongle', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* height: 100vh; */
+            /* display: none; */
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .text-container {
+            z-index: 100;
+            /* width: 100vw;
+            height: 100vh; */
+            display: flex;
+            position: absolute;
+            top: 5%;
+            left: 10%;
+            justify-content: flex-start;
+            align-items: center;
+            font-size: 96px;
+            color: white;
+            /* opacity: 0.8; */
+            user-select: none;
+            text-shadow: 1px 1px rgba(0, 0, 0, 0.1);
+        }
+
+        :root {
+            --color-bg1: rgb(108, 0, 162);
+            --color-bg2: rgb(0, 17, 82);
+            --color1: 18, 113, 255;
+            --color2: 221, 74, 255;
+            --color3: 100, 220, 255;
+            --color4: 200, 50, 50;
+            --color5: 180, 180, 50;
+            --color-interactive: 140, 100, 255;
+            --circle-size: 80%;
+            --blending: hard-light;
+        }
+
+        @keyframes moveInCircle {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(180deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes moveVertical {
+            0% {
+                transform: translateY(-50%);
+            }
+
+            50% {
+                transform: translateY(50%);
+            }
+
+            100% {
+                transform: translateY(-50%);
+            }
+        }
+
+        @keyframes moveHorizontal {
+            0% {
+                transform: translateX(-50%) translateY(-10%);
+            }
+
+            50% {
+                transform: translateX(50%) translateY(10%);
+            }
+
+            100% {
+                transform: translateX(-50%) translateY(-10%);
+            }
+        }
+
+
+        .gradient-bg {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
+            top: 0;
+            left: 0;
+
+            svg {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 0;
+                height: 0;
+            }
+
+
+            .gradients-container {
+                filter: url(#goo) blur(40px);
+                width: 100%;
+                height: 100%;
+            }
+
+            .g1 {
+                position: absolute;
+                background: radial-gradient(circle at center, rgba(var(--color1), 0.8) 0, rgba(var(--color1), 0) 50%) no-repeat;
+                mix-blend-mode: var(--blending);
+
+                width: var(--circle-size);
+                height: var(--circle-size);
+                top: calc(50% - var(--circle-size) / 2);
+                left: calc(50% - var(--circle-size) / 2);
+
+                transform-origin: center center;
+                animation: moveVertical 30s ease infinite;
+
+                opacity: 1;
+            }
+
+            .g2 {
+                position: absolute;
+                background: radial-gradient(circle at center, rgba(var(--color2), 0.8) 0, rgba(var(--color2), 0) 50%) no-repeat;
+                mix-blend-mode: var(--blending);
+
+                width: var(--circle-size);
+                height: var(--circle-size);
+                top: calc(50% - var(--circle-size) / 2);
+                left: calc(50% - var(--circle-size) / 2);
+
+                transform-origin: calc(50% - 400px);
+                animation: moveInCircle 20s reverse infinite;
+
+                opacity: 1;
+            }
+
+            .g3 {
+                position: absolute;
+                background: radial-gradient(circle at center, rgba(var(--color3), 0.8) 0, rgba(var(--color3), 0) 50%) no-repeat;
+                mix-blend-mode: var(--blending);
+
+                width: var(--circle-size);
+                height: var(--circle-size);
+                top: calc(50% - var(--circle-size) / 2 + 200px);
+                left: calc(50% - var(--circle-size) / 2 - 500px);
+
+                transform-origin: calc(50% + 400px);
+                animation: moveInCircle 40s linear infinite;
+
+                opacity: 1;
+            }
+
+            .g4 {
+                position: absolute;
+                background: radial-gradient(circle at center, rgba(var(--color4), 0.8) 0, rgba(var(--color4), 0) 50%) no-repeat;
+                mix-blend-mode: var(--blending);
+
+                width: var(--circle-size);
+                height: var(--circle-size);
+                top: calc(50% - var(--circle-size) / 2);
+                left: calc(50% - var(--circle-size) / 2);
+
+                transform-origin: calc(50% - 200px);
+                animation: moveHorizontal 40s ease infinite;
+
+                opacity: 0.7;
+            }
+
+            /* .g5 {
+                position: absolute;
+                background: radial-gradient(circle at center, rgba(var(--color5), 0.8) 0, rgba(var(--color5), 0) 50%) no-repeat;
+                mix-blend-mode: var(--blending);
+
+                width: calc(var(--circle-size) * 2);
+                height: calc(var(--circle-size) * 2);
+                top: calc(50% - var(--circle-size));
+                left: calc(50% - var(--circle-size));
+
+                transform-origin: calc(50% - 800px) calc(50% + 200px);
+                animation: moveInCircle 20s ease infinite;
+
+                opacity: 1;
+            } */
+
+            .interactive {
+                position: absolute;
+                background: radial-gradient(circle at center, rgba(var(--color-interactive), 0.8) 0, rgba(var(--color-interactive), 0) 50%) no-repeat;
+                mix-blend-mode: var(--blending);
+
+                width: 100%;
+                height: 100%;
+                top: -50%;
+                left: -50%;
+
+                opacity: 0.7;
+            }
+        }
+
+        .container {
+            position: relative;
+            width: 740px;
+            height: 400px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px 65px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            overflow: visible;
+        }
+
+        .site-title {
+            position: absolute;
+            top: 40px;
+            left: 110px;
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            /* For Firefox */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        
+        .great-vibes-regular {
+            font-family: "Great Vibes", cursive;
+            font-size: 100px;
+            font-weight: 400;
+            font-style: normal;
+            transform: translateX(-55px);
+        }
+
+        .intro-text {
+            margin-top: 135px;
+            max-width: 420px;
+        }
+
+        .intro-text h1 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .intro-text p {
+            font-size: 16px;
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .login-form {
+            position: absolute;
+            top: 50%;
+            right: -165px;
+            transform: translateY(-50%);
+            width: 320px;
+            height: 320px;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 0px 30px rgba(0, 0, 0, 0.1), 0 15px 30px rgba(0, 0, 0, 0.1);
+
+            border-left: 5px solid #4f46e5;
+        }
+
+        .login-form h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #343a40;
+            margin-bottom: 25px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 14px 16px;
+            /* margin-bottom: 10px; */
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.3s ease;
+        }
+
+        .login-form input:focus {
+            border: 2px solid #4f46e5;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            /* margin-top: 2px; */
+        }
+
+        .login-form button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .login-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(79, 70, 229, 0.4);
+        }
+
+        .login-form button:hover::before {
+            left: 100%;
+        }
+
+        .login-form button:active {
+            transform: translateY(0);
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper input {
+            width: 100%;
+            padding: 14px 16px;
+            padding-right: 40px;
+            /* Make space for the icon */
+            /* margin-bottom: 18px; */
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.3s ease;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 38%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            font-size: 16px;
+            /* Adjust emoji size if needed */
+            line-height: 1;
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 55px;
+            /* push it downward */
+            right: 300px;
+            /* align to the right */
+            font-size: 8px;
+            color: rgba(79, 70, 229, 0.4);
+        }
+
+        .copyright p{
+            font-size: 14px;
+            color: rgb(74, 98, 255);
+        }
+
+        @media (max-width: 960px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            .login-form {
+                position: static;
+                transform: none;
+                width: 100%;
+                margin-top: 30px;
+                border-left: none;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .site-title {
+                position: static;
+                text-align: right;
+                margin-top: -20px;
+            }
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="text-container">
+        <div class="container">
+            <div class="site-title great-vibes-regular">PostLoom</div>
+
+            <div class="intro-text">
+                <h1>Welcome Back!</h1>
+                <p>Join the community of passionate writers and thinkers. Login to start sharing your thoughts, stories,
+                    and
+                    inspiration with the world.</p>
+                <div class="copyright">
+                    <p>&copy; 2025 PostLoom. All rights reserved.</p>
+                </div>
+            </div>
+
+
+            <div class="login-form" id="loginForm">
+                <h2>Login to Your Account</h2>
+                <form>
+                    <input type="email" id="email" placeholder="email@email.com" required />
+                    <div class="password-wrapper">
+                        <input type="password" id="password" placeholder="password" required />
+                        <span class="toggle-password" id="eyeToggle" onclick="togglePassword()">
+                            <img id="eyeIcon" src="https://emojicdn.elk.sh/👀?style=apple" alt="eye emoji"
+                                style="width: 22px; height: 22px; vertical-align: middle;">
+                        </span>
+                    </div>
+
+
+                    <button type="submit">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="gradient-bg">
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="goo">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8"
+                        result="goo" />
+                    <feBlend in="SourceGraphic" in2="goo" />
+                </filter>
+            </defs>
+        </svg>
+        <div class="gradients-container">
+            <div class="g1"></div>
+            <div class="g2"></div>
+            <div class="g3"></div>
+            <div class="g4"></div>
+            <div class="g5"></div>
+            <div class="interactive"></div>
+        </div>
+    </div>
+</body>
+
+</html>
